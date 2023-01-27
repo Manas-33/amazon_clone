@@ -1,5 +1,6 @@
 import 'package:amazon_clone/common/custom_button.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
+import 'package:amazon_clone/services/auth_services.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/custom_textfield.dart';
@@ -16,11 +17,13 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   Auth _auth = Auth.signup;
+  final AuthService authService=AuthService();
   final _signUpFormKey = GlobalKey<FormState>();
   final _signInFormKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  
 
   @override
   void dispose() {
@@ -30,6 +33,9 @@ class _AuthScreenState extends State<AuthScreen> {
     _nameController.dispose();
   }
 
+  void signUpUser(){
+    authService.signUpUser(context: context, email: _emailController.text, password: _passwordController.text, name: _nameController.text);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +91,11 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(
                           height: 18,
                         ),
-                        CustomButton(text: "Sign Up", onTap: () {})
+                        CustomButton(text: "Sign Up", onTap: (){
+                          if(_signUpFormKey.currentState!.validate()){
+                            signUpUser();
+                          }
+                        })
                       ]),
                     ),
                   ),
