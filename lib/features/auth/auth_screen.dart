@@ -36,6 +36,10 @@ class _AuthScreenState extends State<AuthScreen> {
   void signUpUser(){
     authService.signUpUser(context: context, email: _emailController.text, password: _passwordController.text, name: _nameController.text);
   }
+  void signInUser(){
+    authService.signInUser(context: context, email: _emailController.text, password: _passwordController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,7 +140,11 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(
                           height: 18,
                         ),
-                        CustomButton(text: "Sign In", onTap: () {})
+                        CustomButton(text: "Sign In", onTap: () {
+                          if(_signInFormKey.currentState!.validate()){
+                              signInUser();
+                          }
+                        })
                       ]),
                     ),
                   ),
