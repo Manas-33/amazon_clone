@@ -1,7 +1,9 @@
 
 import 'package:amazon_clone/features/auth/auth_screen.dart';
+import 'package:amazon_clone/features/home/screens/home_screen.dart';
 import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:amazon_clone/router.dart';
+import 'package:amazon_clone/services/auth_services.dart';
 import 'package:flutter/material.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:provider/provider.dart';
@@ -12,9 +14,21 @@ void main() {
   ], child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final AuthService authService=AuthService();
+  @override
+  void initState() {
+    super.initState();
+    //calling the service from the main function in init state
+    authService.getUserData(context);
+  }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -30,6 +44,9 @@ class MyApp extends StatelessWidget {
                   color: Colors.black,
                 ))),
         onGenerateRoute: (settings) => generateRoute(settings),
-        home: const AuthScreen());
+        //checks whether the token is not empty 
+        //if it is empty goes to auth screen
+        //else goes to the home screen
+        home: Provider.of<UserProvider>(context).user.token.isNotEmpty? const HomeScreen():const AuthScreen());
   }
 }

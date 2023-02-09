@@ -14,11 +14,12 @@ import '../constants/utils.dart';
 
 class AuthService {
   //SIGN UP USER
-  void signUpUser(
-      {required BuildContext context,
-      required String email,
-      required String password,
-      required String name}) async {
+  void signUpUser({
+    required BuildContext context,
+    required String email,
+    required String password,
+    required String name
+    }) async {
     try {
       User user = User(
           id: '',
@@ -28,6 +29,7 @@ class AuthService {
           type: '',
           address: '',
           token: '');
+
       http.Response res = await http.post(Uri.parse('$uri/api/signup'),
           body: user.toJson(),
           headers: <String, String>{
@@ -65,11 +67,51 @@ class AuthService {
           onSuccess: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             Provider.of<UserProvider>(context, listen: false).setUser(res.body);
-            await prefs.setString(
-                'x-auth-token', jsonDecode(res.body)['token']);
+            await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
             Navigator.pushNamedAndRemoveUntil(
                 context, HomeScreen.routeName, (route) => false);
           });
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  } 
+  //for getting user data
+  void getUserData(
+    BuildContext context 
+  )async{
+    try {
+
+      SharedPreferences prefs= await SharedPreferences.getInstance();
+      //getting the token from shared preferences of 'x-auth-token' which we stored earlier
+      String? token=prefs.getString('x-auth-token');
+      //checking if the user already has logged in or not
+      if(token==null){
+        prefs.setString('x-auth-token', '');
+      }
+      //getting response from the api regarding the verification
+      var tokenRes=await http.post(
+        Uri.parse('$uri/tokenIsValid'),
+        headers: <String,String>{
+          'Content-Type':'application/json; charset=UTF-8',
+          'x-auth-token':token!
+        }
+        );
+      
+      var response=jsonDecode(tokenRes.body);
+
+      if(response==true){
+        //getting user data from the api
+        http.Response userRes=await http.get(Uri.parse("$uri/"),
+        headers: <String,String>{
+          'Content-Type':'application/json; charset=UTF-8',
+          'x-auth-token':token
+        });
+
+      var userProvider=Provider.of<UserProvider>(context,listen: false);
+      //userRes is the variable which gets the http response of get
+      userProvider.setUser(userRes.body);
+      }
+      
     } catch (e) {
       showSnackBar(context, e.toString());
     }
