@@ -1,4 +1,5 @@
 
+import 'package:amazon_clone/common/bottom_bar.dart';
 import 'package:amazon_clone/features/auth/auth_screen.dart';
 import 'package:amazon_clone/features/home/screens/home_screen.dart';
 import 'package:amazon_clone/providers/user_provider.dart';
@@ -33,6 +34,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         title: 'Amazon Clone',
         theme: ThemeData(
             colorScheme: const ColorScheme.light(
@@ -47,6 +49,8 @@ class _MyAppState extends State<MyApp> {
         //checks whether the token is not empty 
         //if it is empty goes to auth screen
         //else goes to the home screen
-        home: Provider.of<UserProvider>(context).user.token.isNotEmpty? const HomeScreen():const AuthScreen());
+        home: Provider.of<UserProvider>(context).user.token.isNotEmpty? 
+        const BottomBar():
+        const AuthScreen());
   }
 }
